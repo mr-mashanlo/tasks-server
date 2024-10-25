@@ -1,12 +1,15 @@
-const { Schema, model } = require( 'mongoose' );
+import { Schema, model } from 'mongoose';
+import { nanoid } from 'nanoid';
 
 const TaskModel = new Schema( {
-  author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  body: { type: String, require: true },
-  completed: { type: Boolean, default: false },
-  created: { type: String, default: Date.now() },
-  deadline: { type: String },
-  folder: { type: String, default: 'default' }
+  user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  uid: { type: String, default: nanoid( 6 ) },
+  tag: { type: String },
+  title: { type: String, require: true },
+  body: { type: String },
+  status: { type: String, default: 'todo' },
+  priority: { type: String, default: 'low' },
+  created: { type: String, default: Date.now() }
 } );
 
-module.exports = model( 'Task', TaskModel );
+export default model( 'Task', TaskModel );

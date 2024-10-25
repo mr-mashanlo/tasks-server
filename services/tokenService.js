@@ -1,15 +1,15 @@
-const jwt = require( 'jsonwebtoken' );
-const TokenModel = require( '../schemas/tokenModel' );
+import jwt from 'jsonwebtoken';
+import TokenModel from '../schemas/tokenModel.js';
 
 class TokenService {
 
-  generate = ( payload ) => {
+  generate = payload => {
     const RToken = jwt.sign( payload, process.env.REFRESH_KEY, { expiresIn: '30d' } );
     const AToken = jwt.sign( payload, process.env.ACCESS_KEY, { expiresIn: '1h' } );
     return { RToken, AToken };
   };
 
-  create = async ( user ) => {
+  create = async user => {
     const { RToken, AToken } = this.generate( { _id: user._id, email: user.email } );
     const existsToken = await TokenModel.findOne( { user: user._id } );
     if ( existsToken ) {
@@ -30,4 +30,4 @@ class TokenService {
 
 const tokenService = new TokenService();
 
-module.exports = tokenService;
+export default tokenService;

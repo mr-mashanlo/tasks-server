@@ -1,4 +1,4 @@
-const { GeneralError } = require( '../services/errorService' );
+import { GeneralError } from '../services/errorService.js';
 
 // eslint-disable-next-line no-unused-vars
 const errorMiddleware = ( err, req, res, next ) => {
@@ -8,4 +8,4 @@ const errorMiddleware = ( err, req, res, next ) => {
   return res.status( 500 ).json( { code: err.code, errors: err.errors } );
 };
 
-module.exports = errorMiddleware;
+export default errorMiddleware;

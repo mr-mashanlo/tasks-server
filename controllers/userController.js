@@ -1,5 +1,5 @@
-const UserModel = require( '../schemas/userModel' );
-const TokenModel = require( '../schemas/tokenModel' );
+import UserModel from '../schemas/userModel.js';
+import TokenModel from '../schemas/tokenModel.js';
 
 class UserController {
 
@@ -49,4 +49,4 @@ class UserController {
 
 const userController = new UserController();
 
-module.exports = userController;
+export default userController;

@@ -1,11 +1,11 @@
-const TaskModel = require( '../schemas/taskModel' );
+import TaskModel from '../schemas/taskModel.js';
 
 class TaskController {
 
   getAll = async ( req, res, next ) => {
     try {
-      const myID = req.me.id;
-      const tasks = await TaskModel.find( { author: myID } );
+      const user = req.me.id;
+      const tasks = await TaskModel.find( { user } );
       return res.json( tasks );
     } catch ( error ) {
       next( error );
@@ -24,9 +24,9 @@ class TaskController {
 
   create = async ( req, res, next ) => {
     try {
-      const author = req.me.id;
-      const { body, folder } = req.body;
-      const task = await TaskModel.create( { author, body, folder } );
+      const user = req.me.id;
+      const { title, tag, body, status, priority } = req.body;
+      const task = await TaskModel.create( { title, tag, body, status, priority, user } );
       return res.json( task );
     } catch ( error ) {
       next( error );
@@ -57,4 +57,4 @@ class TaskController {
 
 const taskController = new TaskController();
 
-module.exports = taskController;
+export default taskController;

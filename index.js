@@ -1,12 +1,12 @@
-require( 'dotenv' ).config();
-const cors = require( 'cors' );
-const express = require( 'express' );
-const mongoose = require( 'mongoose' );
-const cookieParser = require( 'cookie-parser' );
-const authRouter = require( './routers/authRouter' );
-const userRouter = require( './routers/userRouter' );
-const taskRouter = require( './routers/taskRouter' );
-const errorMiddleware = require( './middlewares/errorMiddleware' );
+import 'dotenv/config';
+import cors from 'cors';
+import express from 'express';
+import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
+import authRouter from './routers/authRouter.js';
+import userRouter from './routers/userRouter.js';
+import taskRouter from './routers/taskRouter.js';
+import errorMiddleware from './middlewares/errorMiddleware.js';
 
 const app = express();
 

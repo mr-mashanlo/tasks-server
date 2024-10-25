@@ -1,10 +1,10 @@
-const bcrypt = require( 'bcryptjs' );
-const jwt = require( 'jsonwebtoken' );
-const { validationResult } = require( 'express-validator' );
-const UserModel = require( '../schemas/userModel' );
-const TokenModel = require( '../schemas/tokenModel' );
-const TokenService = require( '../services/tokenService' );
-const { BadRequest } = require( '../services/errorService' );
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { validationResult } from 'express-validator';
+import UserModel from '../schemas/userModel.js';
+import TokenModel from '../schemas/tokenModel.js';
+import TokenService from '../services/tokenService.js';
+import { BadRequest } from '../services/errorService.js';
 
 class AuthController {
 
@@ -101,4 +101,4 @@ class AuthController {
 
 const authController = new AuthController();
 
-module.exports = authController;
+export default authController;

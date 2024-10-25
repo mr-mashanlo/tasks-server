@@ -1,7 +1,8 @@
-const Router = require( 'express' );
+import Router from 'express';
+import taskController from '../controllers/taskController.js';
+import authMiddleware from '../middlewares/authMiddleware.js';
+
 const router = new Router();
-const taskController = require( '../controllers/taskController' );
-const authMiddleware = require( '../middlewares/authMiddleware' );
 
 router.get( '/all', authMiddleware, taskController.getAll );
 router.get( '/:id', authMiddleware, taskController.getOne );
@@ -9,4 +10,4 @@ router.post( '/create', authMiddleware, taskController.create );
 router.put( '/:id', authMiddleware, taskController.update );
 router.delete( '/:id', authMiddleware, taskController.delete );
 
-module.exports = router;
+export default router;

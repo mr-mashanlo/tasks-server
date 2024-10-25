@@ -1,4 +1,4 @@
-const { Schema, model } = require( 'mongoose' );
+import { Schema, model } from 'mongoose';
 
 const TokenModel = new Schema( {
   user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
@@ -6,4 +6,4 @@ const TokenModel = new Schema( {
   RToken: { type: String, require: true }
 } );
 
-module.exports = model( 'Token', TokenModel );
+export default model( 'Token', TokenModel );

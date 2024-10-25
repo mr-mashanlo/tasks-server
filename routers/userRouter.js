@@ -1,11 +1,12 @@
-const Router = require( 'express' );
+import Router from 'express';
+import userController from '../controllers/userController.js';
+import authMiddleware from'../middlewares/authMiddleware.js';
+
 const router = new Router();
-const userController = require( '../controllers/userController' );
-const authMiddleware = require( '../middlewares/authMiddleware' );
 
 router.get( '/all', authMiddleware, userController.getAll );
 router.get( '/:id', authMiddleware, userController.getOne );
-router.patch( '/:id', authMiddleware, userController.update );
+router.put( '/:id', authMiddleware, userController.update );
 router.delete( '/:id', authMiddleware, userController.delete );
 
-module.exports = router;
+export default router;

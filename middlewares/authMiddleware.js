@@ -1,5 +1,5 @@
-const jwt = require( 'jsonwebtoken' );
-const { Unauthorized } = require( '../services/errorService' );
+import jwt from 'jsonwebtoken';
+import { Unauthorized } from '../services/errorService.js';
 
 const authMiddleware = async ( req, res, next ) => {
   const token = req.cookies.AToken;
@@ -18,4 +18,4 @@ const authMiddleware = async ( req, res, next ) => {
   next();
 };
 
-module.exports = authMiddleware;
+export default authMiddleware;
