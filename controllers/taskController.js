@@ -5,8 +5,15 @@ class TaskController {
   getAll = async ( req, res, next ) => {
     try {
       const user = req.me.id;
-      const tasks = await TaskModel.find( { user } );
-      return res.json( tasks );
+      const { limit, skip } = req.query;
+      const count = await TaskModel.countDocuments( { user } );
+      if ( limit && skip ) {
+        const tasks = await TaskModel.find( { user } ).sort( { _id: -1 } ).limit( +limit ).skip( +skip );
+        return res.json( { data: tasks, count, limit: +limit, skip: +skip } );
+      } else {
+        const tasks = await TaskModel.find( { user } ).sort( { _id: -1 } );
+        return res.json( { data: tasks, count } );
+      }
     } catch ( error ) {
       next( error );
     }
