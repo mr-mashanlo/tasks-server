@@ -1,8 +1,10 @@
 export class GeneralError extends Error {
-  constructor( errors, code = 500 ) {
+  constructor( { code = 500, type, name, message } ) {
     super();
-    this.errors = errors;
     this.code = code;
+    this.type = type;
+    this.name = name;
+    this.message = message;
   }
 
   getCode() {
@@ -11,15 +13,25 @@ export class GeneralError extends Error {
 }
 
 export class BadRequest extends GeneralError {
-  constructor( errors ) {
-    super( errors );
-    this.code = 400;
+  constructor( error ) {
+    super( { ...error, code: 400 } );
   }
 }
 
 export class Unauthorized extends GeneralError {
-  constructor( errors ) {
-    super( errors );
-    this.code = 400;
+  constructor( error ) {
+    super( { ...error, code: 401 } );
+  }
+}
+
+export class Forbidden extends GeneralError {
+  constructor( error ) {
+    super( { ...error, code: 403 } );
+  }
+}
+
+export class Expired extends GeneralError {
+  constructor( error ) {
+    super( { ...error, code: 419 } );
   }
 }

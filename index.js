@@ -1,12 +1,14 @@
 import 'dotenv/config';
+
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import mongoose from 'mongoose';
-import cookieParser from 'cookie-parser';
-import authRouter from './routers/authRouter.js';
-import userRouter from './routers/userRouter.js';
-import taskRouter from './routers/taskRouter.js';
+
 import errorMiddleware from './middlewares/errorMiddleware.js';
+import authRouter from './routers/authRouter.js';
+import taskRouter from './routers/taskRouter.js';
+import userRouter from './routers/userRouter.js';
 
 const app = express();
 

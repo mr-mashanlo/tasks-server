@@ -1,22 +1,23 @@
 import jwt from 'jsonwebtoken';
+
 import TokenModel from '../schemas/tokenModel.js';
 
 class TokenService {
 
   generate = payload => {
-    const RToken = jwt.sign( payload, process.env.REFRESH_KEY, { expiresIn: '30d' } );
-    const AToken = jwt.sign( payload, process.env.ACCESS_KEY, { expiresIn: '1h' } );
+    const RToken = jwt.sign( payload, process.env.REFRESH_KEY, { expiresIn: process.env.REFRESH_TOKEN_TIMER } );
+    const AToken = jwt.sign( payload, process.env.ACCESS_KEY, { expiresIn: process.env.ACCESS_TOKEN_TIMER } );
     return { RToken, AToken };
   };
 
-  create = async user => {
-    const { RToken, AToken } = this.generate( { _id: user._id, email: user.email } );
-    const existsToken = await TokenModel.findOne( { user: user._id } );
+  create = async payload => {
+    const { RToken, AToken } = this.generate( payload );
+    const existsToken = await TokenModel.findOne( { user: payload.id } );
     if ( existsToken ) {
-      await TokenModel.updateOne( { user: user._id }, { $set: { AToken, RToken } } );
+      await TokenModel.updateOne( { user: payload.id }, { $set: { AToken, RToken } } );
       return { RToken, AToken };
     } else {
-      await TokenModel.create( { user: user._id, RToken, AToken } );
+      await TokenModel.create( { user: payload.id, RToken, AToken } );
       return { RToken, AToken };
     }
   };

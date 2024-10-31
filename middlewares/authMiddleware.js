@@ -1,21 +1,27 @@
 import jwt from 'jsonwebtoken';
-import { Unauthorized } from '../services/errorService.js';
+import { MongooseError } from 'mongoose';
+
+import TokenModel from '../schemas/tokenModel.js';
+import { Expired, Unauthorized } from '../services/errorService.js';
+
+const { JsonWebTokenError } = jwt;
 
 const authMiddleware = async ( req, res, next ) => {
-  const token = req.cookies.AToken;
-
-  if ( !token ) {
-    return next( new Unauthorized( [ { path: 'headers', msg: 'Access denied' } ] ) );
+  try {
+    const AToken = req.cookies.AToken;
+    const tokens = await TokenModel.findOne( { AToken } );
+    jwt.verify( tokens.RToken, process.env.REFRESH_KEY );
+    jwt.verify( AToken, process.env.ACCESS_KEY );
+    req.me = { id: tokens.user };
+    next();
+  } catch ( error ) {
+    if ( error instanceof MongooseError ) {
+      return next( new Unauthorized( { type: 'token', name: 'token', message:'Your token not found' } ) );
+    } else if ( error instanceof JsonWebTokenError ) {
+      return next( new Expired( { type: 'token', name: 'expired', message:'Your token has expired' } ) );
+    }
+    return next( error );
   }
-
-  const verifiedToken = jwt.verify( token, process.env.ACCESS_KEY, ( error, decoded ) => { return error || decoded; } );
-  if ( verifiedToken instanceof Error ) {
-    return next( new Unauthorized( [ { path: 'expired', msg:'Your token has expired' } ] ) );
-  }
-
-  req.me = { id: verifiedToken._id };
-
-  next();
 };
 
 export default authMiddleware;

@@ -1,10 +1,10 @@
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
-import UserModel from '../schemas/userModel.js';
+
 import TokenModel from '../schemas/tokenModel.js';
-import TokenService from '../services/tokenService.js';
+import UserModel from '../schemas/userModel.js';
 import { BadRequest } from '../services/errorService.js';
+import TokenService from '../services/tokenService.js';
 
 class AuthController {
 
@@ -14,20 +14,20 @@ class AuthController {
 
       const errors = validationResult( req );
       if ( !errors.isEmpty() ) {
-        throw new BadRequest( errors.errors.map( error => ( { path: error.path, msg: error.msg } ) ) );
+        throw new BadRequest( { type: 'validation', name: errors.errors[0].path, message: errors.errors[0].msg } );
       }
 
       const user = await UserModel.findOne( { email } );
       if ( !user ) {
-        throw new BadRequest( [ { path: 'email', msg: 'User not found' } ] );
+        throw new BadRequest( { type: 'validation', name: 'email', message: 'User not found' } );
       }
 
       const validPassword = bcrypt.compareSync( password, user.password );
       if ( !validPassword ) {
-        throw new BadRequest( [ { path:'password', msg:'Incorrect password' } ] );
+        throw new BadRequest( { type: 'validation', name:'password', message:'Incorrect password' } );
       }
 
-      const tokens = await TokenService.create( user );
+      const tokens = await TokenService.create( { id: user._id } );
       res.cookie( 'AToken', tokens.AToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'None', secure: true } );
       return res.json( { id: user._id, token: tokens.AToken } );
     } catch ( error ) {
@@ -41,21 +41,21 @@ class AuthController {
 
       const errors = validationResult( req );
       if ( !errors.isEmpty() ) {
-        throw new BadRequest( errors.errors.map( error => ( { path: error.path, msg: error.msg } ) ) );
+        throw new BadRequest( { type: 'validation', name: errors.errors[0].path, message: errors.errors[0].msg } );
       }
 
       const candidate = await UserModel.findOne( { email } );
       if ( candidate ) {
-        throw new BadRequest( [ { path:'email', msg: 'Email already exists' } ] );
+        throw new BadRequest( { type: 'validation', name:'email', message: 'Email already exists' } );
       }
 
       if ( password !== confirm ) {
-        throw new BadRequest( [ { path: 'confirm', msg: 'Passwords do not match' } ] );
+        throw new BadRequest( { type: 'validation', name: 'confirm', message: 'Passwords do not match' } );
       }
 
       const hashPassword = bcrypt.hashSync( password, 7 );
       const user = await UserModel.create( { email, password: hashPassword } );
-      const tokens = await TokenService.create( user );
+      const tokens = await TokenService.create( { id: user._id } );
       res.cookie( 'AToken', tokens.AToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'None', secure: true } );
       return res.json( { id: user._id, token: tokens.AToken } );
     } catch ( error ) {
@@ -88,10 +88,9 @@ class AuthController {
     try {
       const { AToken } = req.cookies;
       const tokens = await TokenModel.findOne( { AToken } );
-      const user = jwt.verify( tokens.RToken, process.env.REFRESH_KEY );
-      const updatedTokens = await TokenService.create( user );
+      const updatedTokens = await TokenService.create( { id: tokens.user } );
       res.cookie( 'AToken', updatedTokens.AToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'None', secure: true } );
-      return res.json( { id: user._id, AToken: updatedTokens.AToken } );
+      return res.json( { id: tokens.user, token: updatedTokens.AToken } );
     } catch ( error ) {
       next( error );
     }

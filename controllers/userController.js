@@ -1,5 +1,5 @@
-import UserModel from '../schemas/userModel.js';
 import TokenModel from '../schemas/tokenModel.js';
+import UserModel from '../schemas/userModel.js';
 
 class UserController {
 

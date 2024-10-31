@@ -26,8 +26,8 @@ class TaskController {
     try {
       const user = req.me.id;
       const { title, tag, body, status, priority } = req.body;
-      const task = await TaskModel.create( { title, tag, body, status, priority, user } );
-      return res.json( task );
+      const createdTask = await TaskModel.create( { title, tag, body, status, priority, user } );
+      return res.json( createdTask );
     } catch ( error ) {
       next( error );
     }
@@ -35,9 +35,10 @@ class TaskController {
 
   update = async ( req, res, next ) => {
     try {
-      const { _id, ...body } = req.body;
-      const task = await TaskModel.findOneAndUpdate( { _id }, { $set: { ...body } }, { new: true } );
-      return res.json( task );
+      const id = req.params.id;
+      const task = req.body;
+      const updatedTask = await TaskModel.findOneAndUpdate( { _id: id }, { $set: task }, { new: true } );
+      return res.json( updatedTask );
     } catch ( error ) {
       next( error );
     }

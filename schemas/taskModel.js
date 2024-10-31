@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { model, Schema } from 'mongoose';
 import { nanoid } from 'nanoid';
 
 const TaskModel = new Schema( {
