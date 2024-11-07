@@ -1,9 +1,8 @@
 import { model, Schema } from 'mongoose';
-import { nanoid } from 'nanoid';
 
 const TaskModel = new Schema( {
   user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  uid: { type: String, default: nanoid( 6 ) },
+  uid: { type: String, required: true },
   tag: { type: String },
   title: { type: String, require: true },
   body: { type: String },

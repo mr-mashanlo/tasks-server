@@ -1,3 +1,5 @@
+import { uid } from 'uid';
+
 import TaskModel from '../schemas/taskModel.js';
 
 class TaskController {
@@ -33,7 +35,7 @@ class TaskController {
     try {
       const user = req.me.id;
       const { title, tag, body, status, priority } = req.body;
-      const createdTask = await TaskModel.create( { title, tag, body, status, priority, user } );
+      const createdTask = await TaskModel.create( { uid: uid( 9 ), title, tag, body, status, priority, user } );
       return res.json( createdTask );
     } catch ( error ) {
       next( error );
