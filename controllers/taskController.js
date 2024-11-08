@@ -7,15 +7,20 @@ class TaskController {
   getAll = async ( req, res, next ) => {
     try {
       const user = req.me.id;
-      const { limit, skip } = req.query;
-      const count = await TaskModel.countDocuments( { user } );
-      if ( limit && skip ) {
-        const tasks = await TaskModel.find( { user } ).sort( { _id: -1 } ).limit( +limit ).skip( +skip );
-        return res.json( { data: tasks, count, limit: +limit, skip: +skip } );
-      } else {
-        const tasks = await TaskModel.find( { user } ).sort( { _id: -1 } );
-        return res.json( { data: tasks, count } );
+      const { limit, skip, query, status, priority } = req.query;
+      const filter = { user };
+      if ( status ) filter.status = status;
+      if ( priority ) filter.priority = priority;
+      if ( query ) {
+        filter.$or = [
+          { uid: { $regex: query, $options: 'i' } },
+          { tag: { $regex: query, $options: 'i' } },
+          { title: { $regex: query, $options: 'i' } }
+        ];
       }
+      const count = await TaskModel.countDocuments( filter );
+      const tasks = await TaskModel.find( filter ).sort( { _id: -1 } ).limit( +limit ).skip( +skip );
+      return res.json( { data: tasks, count, limit: +limit, skip: +skip } );
     } catch ( error ) {
       next( error );
     }
